@@ -1,0 +1,245 @@
+---
+title: "SIBECOL2019 Tweets"
+output:
+  flexdashboard::flex_dashboard:
+    self_contained: FALSE
+    vertical_layout: scroll
+    source_code: https://github.com/Pakillo/tweets_SIBECOL2019
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, cache=FALSE)
+```
+
+```{r}
+#library(rtweet)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(flexdashboard)
+#source("R/embed_tweet.R")
+source("R/print_tweet.R")
+source("R/top.R")
+```
+
+```{r}
+tweets <- readRDS("tweets.rds")
+```
+
+Home {data-orientation=rows}
+=============================
+
+
+
+Row
+-----------------------
+
+### Chart 1
+
+```{r}
+valueBox(value = nrow(tweets), caption = "Tweets", icon = "fa-comment")
+```
+
+
+### Chart 2
+
+```{r}
+valueBox(value = length(unique(tweets$user_id)), caption = "Tweeters", icon = "fa-user")
+```
+
+
+### Chart 3
+
+```{r}
+valueBox(value = sum(tweets$favorite_count), caption = "Likes", icon = "fa-heart")
+```
+
+
+### Chart 4
+
+```{r}
+valueBox(value = sum(tweets$retweet_count), caption = "Retweets", icon = "fa-retweet")
+```
+
+
+
+Row
+-----------------------------
+
+### Chart 5
+
+```{r out.width='100%'}
+timeplot <- rtweet::ts_plot(tweets, by = "hours", tz = "Europe/Madrid") +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(face = "bold")) +
+  labs(x = NULL, y = "Number of tweets", title = "#SIBECOL2019 tweets per hour")
+#timeplot
+ggplotly(timeplot)
+```
+
+
+Row
+-----------------------------
+
+### MOST LIKED
+
+```{r results='asis'}
+ml <- tweets_most_liked(tweets, n = 1)
+print_tweet(ml)
+```
+
+### MOST RETWEETED
+
+```{r results='asis'}
+mrt <- tweets_most_RT(tweets, n = 1)
+print_tweet(mrt)
+```
+
+
+### MOST RECENT
+
+```{r results='asis'}
+mrecent <- tweets_most_recent(tweets, n = 1)
+print_tweet(mrecent)
+```
+
+
+
+
+Top tweets
+================================
+
+Column
+----------------
+
+
+```{r results='asis'}
+n = 10
+ml <- tweets_most_liked(tweets, n)
+cat("\n\n### MOST LIKED\n\n.\n\n")
+for (i in seq_len(n)) {
+  cat("\n\n### \n\n")
+  print_tweet(ml[i, ])
+}
+```
+
+
+
+Column
+----------------
+
+
+```{r results='asis'}
+n = 10
+ml <- tweets_most_RT(tweets, n)
+cat("\n\n### MOST RETWEETED\n\n.\n\n")
+for (i in seq_len(n)) {
+  cat("\n\n### \n\n")
+  print_tweet(ml[i, ])
+}
+```
+
+
+
+Column
+----------------
+
+
+```{r results='asis'}
+n = 10
+ml <- tweets_most_recent(tweets, n)
+cat("\n\n### MOST RECENT\n\n.\n\n")
+for (i in seq_len(n)) {
+  cat("\n\n### \n\n")
+  print_tweet(ml[i, ])
+}
+```
+
+
+Top tweeters
+=====================
+
+Column
+---------------
+
+### MOST ACTIVE
+
+```{r results = 'asis'}
+most.active <- users_most_active(tweets)
+ggplot(most.active) + 
+  aes(reorder(screen_name, ntweets), ntweets) +
+  geom_col() +
+  coord_flip() +
+  labs(x = "Tweeter", y = "Number of tweets") +
+  theme_minimal(base_size = 15)
+```
+
+Column
+-------------------
+
+### MOST LIKED
+
+```{r results = 'asis'}
+most.liked <- users_most_liked(tweets)
+ggplot(most.liked) + 
+  aes(reorder(screen_name, nlikes), nlikes) +
+  geom_col() +
+  coord_flip() +
+  labs(x = "Tweeter", y = "Number of likes") +
+  theme_minimal(base_size = 15)
+```
+
+
+Column
+--------------
+
+
+### MOST RETWEETED
+
+```{r results = 'asis'}
+most.rt <- users_most_RT(tweets)
+ggplot(most.rt) + 
+  aes(reorder(screen_name, nrt), nrt) +
+  geom_col() +
+  coord_flip() +
+  labs(x = "Tweeter", y = "Number of RT") +
+  theme_minimal(base_size = 15)
+```
+
+
+
+
+All tweets
+=====================
+
+### Explore all tweets
+
+
+
+```{r}
+
+twits <- tweets %>%
+  dplyr::select(created_at, screen_name, text, retweet_count, favorite_count, status_url) %>%
+  rename(Timestamp = created_at, 
+         User = screen_name, 
+         Tweet = text, 
+         RT = retweet_count, 
+         Fav = favorite_count) %>%
+  mutate(Timestamp = paste("<a href='", status_url, "'", ' target="_blank">', 
+                            as.character(Timestamp), "</a>", sep = "")) %>%
+  dplyr::select(-status_url) %>%
+  arrange(desc(RT), desc(Fav))
+```
+
+
+
+
+```{r}
+DT::datatable(twits, escape = FALSE, filter = "top",
+              options = list(pageLength = 10))
+```
+
+
+
+
+
