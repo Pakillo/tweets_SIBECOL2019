@@ -8,21 +8,19 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, cache=FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, cache = FALSE)
 ```
 
-```{r}
-#library(rtweet)
+```{r pkgs}
 library(dplyr)
 library(ggplot2)
 library(plotly)
 library(flexdashboard)
-#source("R/embed_tweet.R")
 source("R/print_tweet.R")
 source("R/top.R")
 ```
 
-```{r}
+```{r read_tweets}
 tweets <- readRDS("tweets.rds")
 ```
 
@@ -36,28 +34,28 @@ Row
 
 ### Chart 1
 
-```{r}
+```{r index-3}
 valueBox(value = nrow(tweets), caption = "Tweets", icon = "fa-comment")
 ```
 
 
 ### Chart 2
 
-```{r}
+```{r index-4}
 valueBox(value = length(unique(tweets$user_id)), caption = "Tweeters", icon = "fa-user")
 ```
 
 
 ### Chart 3
 
-```{r}
+```{r index-5}
 valueBox(value = sum(tweets$favorite_count), caption = "Likes", icon = "fa-heart")
 ```
 
 
 ### Chart 4
 
-```{r}
+```{r index-6}
 valueBox(value = sum(tweets$retweet_count), caption = "Retweets", icon = "fa-retweet")
 ```
 
@@ -66,9 +64,9 @@ valueBox(value = sum(tweets$retweet_count), caption = "Retweets", icon = "fa-ret
 Row
 -----------------------------
 
-### Chart 5
+### 
 
-```{r out.width='100%'}
+```{r timeplot, out.width='100%'}
 timeplot <- rtweet::ts_plot(tweets, by = "hours", tz = "Europe/Madrid") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(face = "bold")) +
@@ -81,24 +79,24 @@ ggplotly(timeplot)
 Row
 -----------------------------
 
-### MOST LIKED
+### `r icon::fa("heart")` MOST LIKED 
 
-```{r results='asis'}
+```{r index-8, results='asis'}
 ml <- tweets_most_liked(tweets, n = 1)
 print_tweet(ml)
 ```
 
-### MOST RETWEETED
+### `r icon::fa("retweet")` MOST RETWEETED
 
-```{r results='asis'}
+```{r index-9, results='asis'}
 mrt <- tweets_most_RT(tweets, n = 1)
 print_tweet(mrt)
 ```
 
 
-### MOST RECENT
+### `r icon::fa("clock")` MOST RECENT
 
-```{r results='asis'}
+```{r index-10, results='asis'}
 mrecent <- tweets_most_recent(tweets, n = 1)
 print_tweet(mrecent)
 ```
@@ -106,15 +104,21 @@ print_tweet(mrecent)
 
 
 
+
+
 Top tweets
 ================================
+
+```{r index-11}
+n = 20
+```
+
 
 Column
 ----------------
 
 
-```{r results='asis'}
-n = 10
+```{r index-12, results='asis', eval=TRUE}
 ml <- tweets_most_liked(tweets, n)
 cat("\n\n### MOST LIKED\n\n.\n\n")
 for (i in seq_len(n)) {
@@ -129,8 +133,7 @@ Column
 ----------------
 
 
-```{r results='asis'}
-n = 10
+```{r index-13, results='asis', eval=TRUE}
 ml <- tweets_most_RT(tweets, n)
 cat("\n\n### MOST RETWEETED\n\n.\n\n")
 for (i in seq_len(n)) {
@@ -145,8 +148,7 @@ Column
 ----------------
 
 
-```{r results='asis'}
-n = 10
+```{r index-14, results='asis', eval=TRUE}
 ml <- tweets_most_recent(tweets, n)
 cat("\n\n### MOST RECENT\n\n.\n\n")
 for (i in seq_len(n)) {
@@ -156,16 +158,23 @@ for (i in seq_len(n)) {
 ```
 
 
+
+
 Top tweeters
 =====================
+
+```{r index-15}
+n = 20
+```
+
 
 Column
 ---------------
 
 ### MOST ACTIVE
 
-```{r results = 'asis'}
-most.active <- users_most_active(tweets)
+```{r index-16, results = 'asis'}
+most.active <- users_most_active(tweets, n)
 ggplot(most.active) + 
   aes(reorder(screen_name, ntweets), ntweets) +
   geom_col() +
@@ -179,8 +188,8 @@ Column
 
 ### MOST LIKED
 
-```{r results = 'asis'}
-most.liked <- users_most_liked(tweets)
+```{r index-17, results = 'asis'}
+most.liked <- users_most_liked(tweets, n)
 ggplot(most.liked) + 
   aes(reorder(screen_name, nlikes), nlikes) +
   geom_col() +
@@ -196,8 +205,8 @@ Column
 
 ### MOST RETWEETED
 
-```{r results = 'asis'}
-most.rt <- users_most_RT(tweets)
+```{r index-18, results = 'asis'}
+most.rt <- users_most_RT(tweets, n)
 ggplot(most.rt) + 
   aes(reorder(screen_name, nrt), nrt) +
   geom_col() +
@@ -216,7 +225,7 @@ All tweets
 
 
 
-```{r}
+```{r index-19}
 
 twits <- tweets %>%
   dplyr::select(created_at, screen_name, text, retweet_count, favorite_count, status_url) %>%
@@ -234,7 +243,7 @@ twits <- tweets %>%
 
 
 
-```{r}
+```{r index-20}
 DT::datatable(twits, escape = FALSE, filter = "top",
               options = list(pageLength = 10))
 ```
