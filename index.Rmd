@@ -18,6 +18,7 @@ library(plotly)
 library(flexdashboard)
 source("R/print_tweet.R")
 source("R/top.R")
+source("R/wordcloud.R")
 ```
 
 ```{r read_tweets}
