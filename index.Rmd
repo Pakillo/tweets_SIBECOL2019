@@ -237,7 +237,7 @@ Top mentions
 ====================
 
 ```{r}
-wordcloud(tweets, "mentions", min_count = 2)
+wordcloud(tweets, "mentions", min_count = 2, min_size = 1)
 ```
 
 
