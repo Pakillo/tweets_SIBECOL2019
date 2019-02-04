@@ -1,6 +1,7 @@
 wordcloud <- function(df, show, ...) {
 
-  toremove <- c(stopwords("en"), stopwords("es"),
+  toremove <- c(quanteda::stopwords("en"),
+                quanteda::stopwords("es"),
                 "http", "https", "t.co")
 
   if (show == "words") {
@@ -11,7 +12,6 @@ wordcloud <- function(df, show, ...) {
 
   if (show == "hashtags") {
     vec <- unlist(df$hashtags)
-    #toremove <- c(toremove, )
   }
 
   if (show == "mentions") {
@@ -21,10 +21,7 @@ wordcloud <- function(df, show, ...) {
 
 
   words <- quanteda::dfm(vec,
-                        remove = c(stopwords("en"), stopwords("es"),
-                                   "http", "https", "t.co",
-                                   "sibecol2019", "sibecol", "sibecol19",
-                                   "_aeet_"),
+                        remove = toremove,
                         remove_punct = TRUE,
                         remove_twitter = TRUE,
                         remove_numbers = TRUE,
