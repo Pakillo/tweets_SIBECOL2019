@@ -216,6 +216,29 @@ ggplot(most.rt) +
 ```
 
 
+Top words
+=======================
+
+```{r}
+wordcloud(tweets, "words", min_count = 5)
+```
+
+
+Top hashtags
+====================
+
+```{r}
+wordcloud(tweets, "hashtags", min_count = 2)
+```
+
+
+Top mentions
+====================
+
+```{r}
+wordcloud(tweets, "mentions", min_count = 2)
+```
+
 
 
 All tweets
