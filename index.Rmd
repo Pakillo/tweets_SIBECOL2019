@@ -221,7 +221,7 @@ Top words
 =======================
 
 ```{r}
-wordcloud(tweets, "words", min_count = 5)
+wordcloud(tweets, "words", min_count = 5, min_size = 1, max_words = 100)
 ```
 
 
@@ -229,7 +229,7 @@ Top hashtags
 ====================
 
 ```{r}
-wordcloud(tweets, "hashtags", min_count = 2)
+wordcloud(tweets, "hashtags", min_count = 2, min_size = 1, max_words = 100)
 ```
 
 
@@ -237,7 +237,7 @@ Top mentions
 ====================
 
 ```{r}
-wordcloud(tweets, "mentions", min_count = 2, min_size = 1)
+wordcloud(tweets, "mentions", min_count = 2, min_size = 1, max_words = 100)
 ```
 
 
