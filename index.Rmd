@@ -35,28 +35,28 @@ Row
 
 ### Chart 1
 
-```{r index-3}
+```{r box_ntweets}
 valueBox(value = nrow(tweets), caption = "Tweets", icon = "fa-comment")
 ```
 
 
 ### Chart 2
 
-```{r index-4}
+```{r box_ntweeters}
 valueBox(value = length(unique(tweets$user_id)), caption = "Tweeters", icon = "fa-user")
 ```
 
 
 ### Chart 3
 
-```{r index-5}
+```{r box_nlikes}
 valueBox(value = sum(tweets$favorite_count), caption = "Likes", icon = "fa-heart")
 ```
 
 
 ### Chart 4
 
-```{r index-6}
+```{r box_nRT}
 valueBox(value = sum(tweets$retweet_count), caption = "Retweets", icon = "fa-retweet")
 ```
 
@@ -82,14 +82,14 @@ Row
 
 ### `r icon::fa("heart")` MOST LIKED 
 
-```{r index-8, results='asis'}
+```{r tw_mostliked, results='asis'}
 ml <- tweets_most_liked(tweets, n = 1)
 print_tweet(ml)
 ```
 
 ### `r icon::fa("retweet")` MOST RETWEETED
 
-```{r index-9, results='asis'}
+```{r tw_mostRT, results='asis'}
 mrt <- tweets_most_RT(tweets, n = 1)
 print_tweet(mrt)
 ```
@@ -97,7 +97,7 @@ print_tweet(mrt)
 
 ### `r icon::fa("clock")` MOST RECENT
 
-```{r index-10, results='asis'}
+```{r tw_mostrecent, results='asis'}
 mrecent <- tweets_most_recent(tweets, n = 1)
 print_tweet(mrecent)
 ```
@@ -110,7 +110,7 @@ print_tweet(mrecent)
 Top tweets
 ================================
 
-```{r index-11}
+```{r ntw_print}
 n = 20
 ```
 
@@ -118,10 +118,11 @@ n = 20
 Column
 ----------------
 
+*** **MOST LIKED** ***
 
-```{r index-12, results='asis', eval=TRUE}
+```{r print_mostliked, results='asis'}
 ml <- tweets_most_liked(tweets, n)
-cat("\n\n### MOST LIKED\n\n.\n\n")
+#cat("\n\n### MOST LIKED\n\n.\n\n")
 for (i in seq_len(n)) {
   cat("\n\n### \n\n")
   print_tweet(ml[i, ])
@@ -131,12 +132,13 @@ for (i in seq_len(n)) {
 
 
 Column
-----------------
+------------------------
 
+*** **MOST RETWEETED** ***
 
-```{r index-13, results='asis', eval=TRUE}
+```{r print_mostRT, results='asis'}
 ml <- tweets_most_RT(tweets, n)
-cat("\n\n### MOST RETWEETED\n\n.\n\n")
+#cat("\n\n### MOST RETWEETED\n\n.\n\n")
 for (i in seq_len(n)) {
   cat("\n\n### \n\n")
   print_tweet(ml[i, ])
@@ -146,12 +148,14 @@ for (i in seq_len(n)) {
 
 
 Column
-----------------
+-------------------------
+
+*** **MOST RECENT** ***
 
 
-```{r index-14, results='asis', eval=TRUE}
+```{r print_mostrecent, results='asis'}
 ml <- tweets_most_recent(tweets, n)
-cat("\n\n### MOST RECENT\n\n.\n\n")
+#cat("\n\n### MOST RECENT\n\n.\n\n")
 for (i in seq_len(n)) {
   cat("\n\n### \n\n")
   print_tweet(ml[i, ])
@@ -164,7 +168,7 @@ for (i in seq_len(n)) {
 Top tweeters
 =====================
 
-```{r index-15}
+```{r ntweeters_plots}
 n = 20
 ```
 
@@ -174,7 +178,7 @@ Column
 
 ### MOST ACTIVE
 
-```{r index-16, results = 'asis'}
+```{r tweeters_mostactive, fig.height=6}
 most.active <- users_most_active(tweets, n)
 ggplot(most.active) + 
   aes(reorder(screen_name, ntweets), ntweets) +
@@ -189,7 +193,7 @@ Column
 
 ### MOST LIKED
 
-```{r index-17, results = 'asis'}
+```{r tweeters_mostliked, fig.height=6}
 most.liked <- users_most_liked(tweets, n)
 ggplot(most.liked) + 
   aes(reorder(screen_name, nlikes), nlikes) +
@@ -206,7 +210,7 @@ Column
 
 ### MOST RETWEETED
 
-```{r index-18, results = 'asis'}
+```{r tweeters_mostRT, fig.height=6}
 most.rt <- users_most_RT(tweets, n)
 ggplot(most.rt) + 
   aes(reorder(screen_name, nrt), nrt) +
@@ -217,28 +221,60 @@ ggplot(most.rt) +
 ```
 
 
+
+
+
+
 Top words
 =======================
 
-```{r}
+### Wordcloud {.no-title .no-mobile}
+
+```{r cloud_words, fig.width=8, fig.height=8}
 wordcloud(tweets, "words", min_count = 5, min_size = 1, max_words = 100)
 ```
+
+### Wordcloud {.no-title .mobile}
+
+```{r cloud_words_mob}
+wordcloud(tweets, "words", min_count = 5, min_size = 1, max_words = 30)
+```
+
+
 
 
 Top hashtags
 ====================
 
-```{r}
-wordcloud(tweets, "hashtags", min_count = 2, min_size = 1, max_words = 100)
+### Wordcloud {.no-title .no-mobile}
+
+```{r cloud_hashtags, fig.width=8, fig.height=8}
+wordcloud(tweets, "hashtags", min_count = 2, min_size = 1, max_words = 70)
 ```
+
+### Wordcloud {.no-title .mobile}
+
+```{r cloud_hashtags_mob}
+wordcloud(tweets, "hashtags", min_count = 2, min_size = 1, max_words = 30)
+```
+
 
 
 Top mentions
 ====================
 
-```{r}
-wordcloud(tweets, "mentions", min_count = 2, min_size = 1, max_words = 100)
+### Wordcloud {.no-title .no-mobile}
+
+```{r cloud_mentions, fig.width=8, fig.height=8}
+wordcloud(tweets, "mentions", min_count = 2, min_size = 1, max_words = 70)
 ```
+
+### Wordcloud {.no-title .mobile}
+
+```{r cloud_mentions_mob}
+wordcloud(tweets, "mentions", min_count = 2, min_size = 1, max_words = 30)
+```
+
 
 
 
@@ -249,7 +285,7 @@ All tweets
 
 
 
-```{r index-19}
+```{r prepareDT}
 
 twits <- tweets %>%
   dplyr::select(created_at, screen_name, text, retweet_count, favorite_count, status_url) %>%
@@ -267,7 +303,7 @@ twits <- tweets %>%
 
 
 
-```{r index-20}
+```{r alltwDT}
 DT::datatable(twits, escape = FALSE, filter = "top",
               options = list(pageLength = 10))
 ```
